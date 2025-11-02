@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: distributed-monolith-db
+    environment:
+      POSTGRES_DB: scraperdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_monolith:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  scraper-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: distributed-monolith-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: scraperdb
+      DB_USER: admin
+      DB_PASSWORD: adminpass
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  postgres_data_monolith:
+
