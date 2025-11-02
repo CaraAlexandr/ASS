@@ -4,3 +4,7 @@
 distributed-monolith/bin/
 
 distributed-monolith/target/
+
+microservices/consumer-service/target/
+
+microservices/producer-service/target/
