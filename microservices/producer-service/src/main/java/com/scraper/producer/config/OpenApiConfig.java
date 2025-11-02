@@ -15,7 +15,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Producer Service API")
                         .version("1.0.0")
-                        .description("Producer service that scrapes 999.md and publishes URLs to RabbitMQ")
+                        .description("Producer service that scrapes eBay and publishes URLs to RabbitMQ")
                         .contact(new Contact()
                                 .name("Scraper Team")
                                 .email("scraper@example.com")));

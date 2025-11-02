@@ -1,0 +1,11 @@
+/app/src/main/java/com/scraper/consumer/config/AppConfig.java
+/app/src/main/java/com/scraper/consumer/ConsumerServiceApplication.java
+/app/src/main/java/com/scraper/consumer/service/ProductExtractorService.java
+/app/src/main/java/com/scraper/consumer/controller/ConsumerController.java
+/app/src/main/java/com/scraper/consumer/service/ProductService.java
+/app/src/main/java/com/scraper/consumer/repository/ProductDetailsRepository.java
+/app/src/main/java/com/scraper/consumer/listener/UrlMessageListener.java
+/app/src/main/java/com/scraper/consumer/entity/ProductDetails.java
+/app/src/main/java/com/scraper/consumer/config/OpenApiConfig.java
+/app/src/main/java/com/scraper/consumer/config/RabbitMQConfig.java
+/app/src/main/java/com/scraper/consumer/dto/ProductInfo.java

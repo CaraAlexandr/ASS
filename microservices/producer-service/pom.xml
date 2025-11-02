@@ -16,7 +16,7 @@
     <artifactId>producer-service</artifactId>
     <version>1.0.0</version>
     <name>Producer Service</name>
-    <description>Producer service that scrapes 999.md and publishes URLs to RabbitMQ</description>
+    <description>Producer service that scrapes eBay and publishes URLs to RabbitMQ</description>
     
     <properties>
         <java.version>21</java.version>

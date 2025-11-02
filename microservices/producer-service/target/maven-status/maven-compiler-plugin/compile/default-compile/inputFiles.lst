@@ -1,0 +1,6 @@
+/app/src/main/java/com/scraper/producer/controller/ProducerController.java
+/app/src/main/java/com/scraper/producer/config/OpenApiConfig.java
+/app/src/main/java/com/scraper/producer/config/RabbitMQConfig.java
+/app/src/main/java/com/scraper/producer/ProducerServiceApplication.java
+/app/src/main/java/com/scraper/producer/service/WebScraperService.java
+/app/src/main/java/com/scraper/producer/service/MessageProducerService.java

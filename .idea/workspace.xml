@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="799e932f-fbe6-4057-a77a-4fc2d7d3c90f" name="Changes" comment="" />
+    <list default="true" id="cfe4478b-8a9f-427e-84af-92d484d72a8d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/remote-targets.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/remote-targets.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/distributed-monolith/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/distributed-monolith/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/distributed-monolith/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/distributed-monolith/docker-compose-monolith.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/distributed-monolith/src/main/java/com/scraper/service/WebScraperService.java" beforeDir="false" afterPath="$PROJECT_DIR$/distributed-monolith/src/main/java/com/scraper/service/WebScraperService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservices/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/microservices/docker-compose-microservices.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservices/producer-service/src/main/java/com/scraper/producer/service/WebScraperService.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservices/producer-service/src/main/java/com/scraper/producer/service/WebScraperService.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,19 +33,22 @@
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 1
 }]]></component>
-  <component name="ProjectId" id="34v72UULiMCf4qDEz5npVlAMUMg" />
+  <component name="ProjectId" id="34v92hQtHFjCNZsmsWoSWjsjrxk" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Docker.distributed-monolith/docker-compose-monolith.yml.scraper-app: Compose Deployment.executor": "Run",
+    "Docker.distributed-monolith/docker-compose-monolith.yml: Compose Deployment.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "docs-scraper-readme-4a06a",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "//wsl.localhost/Ubuntu/home/alex/projects/masters/ASS",
     "node.js.detected.package.eslint": "true",
@@ -40,29 +56,11 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunDashboard">
-    <option name="configurationTypes">
-      <set>
-        <option value="KtorApplicationConfigurationType" />
-        <option value="MicronautRunConfigurationType" />
-        <option value="QuarkusRunConfigurationType" />
-        <option value="SpringBootApplicationConfigurationType" />
-      </set>
-    </option>
-  </component>
-  <component name="RunManager" selected="Spring Boot.DistributedMonolithApplication">
-    <configuration name="ConsumerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="consumer-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.scraper.consumer.ConsumerServiceApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="Docker.distributed-monolith/docker-compose-monolith.yml.scraper-app: Compose Deployment">
     <configuration name="DistributedMonolithApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="distributed-monolith" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.scraper.DistributedMonolithApplication" />
@@ -77,6 +75,37 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml" />
+      <method v="2" />
+    </configuration>
+    <configuration name="distributed-monolith/docker-compose-monolith.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="sourceFilePath" value="distributed-monolith/docker-compose-monolith.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="distributed-monolith/docker-compose-monolith.yml.scraper-app: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="scraper-app" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="distributed-monolith/docker-compose-monolith.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.distributed-monolith/docker-compose-monolith.yml.scraper-app: Compose Deployment" />
+        <item itemvalue="Docker.distributed-monolith/docker-compose-monolith.yml: Compose Deployment" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -88,12 +117,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="799e932f-fbe6-4057-a77a-4fc2d7d3c90f" name="Changes" comment="" />
-      <created>1762081984458</created>
+      <changelist id="cfe4478b-8a9f-427e-84af-92d484d72a8d" name="Changes" comment="" />
+      <created>1762082972430</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1762081984458</updated>
-      <workItem from="1762081985614" duration="667000" />
+      <updated>1762082972430</updated>
+      <workItem from="1762082973603" duration="752000" />
     </task>
     <servers />
   </component>
