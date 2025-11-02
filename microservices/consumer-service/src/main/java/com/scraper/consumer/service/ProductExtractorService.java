@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,102 +23,148 @@ public class ProductExtractorService {
         try {
             Document doc = Jsoup.connect(url)
                     .timeout(TIMEOUT)
-                    .userAgent("Mozilla/5.0")
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
                     .get();
-            
+
+            String host = "";
+            try { host = new URI(url).getHost(); } catch (Exception ignore) {}
+
             ProductInfo.ProductInfoBuilder builder = ProductInfo.builder();
-            
-            // Title
-            Element titleElement = doc.selectFirst("h1[itemprop=name]");
-            if (titleElement != null) {
-                builder.title(titleElement.text());
-            }
-            
-            // Description
-            Element descElement = doc.selectFirst("div[itemprop=description]");
-            if (descElement != null) {
-                builder.description(descElement.text());
-            }
-            
-            // Price
-            Element priceElement = doc.selectFirst("span.adPage__content__price-feature__prices__price__value");
-            Element currencyElement = doc.selectFirst("span[itemprop=priceCurrency]");
-            if (priceElement != null) {
-                String price = priceElement.text();
-                if (price.contains("negociabil")) {
-                    builder.price(price);
-                } else if (currencyElement != null) {
-                    builder.price(price + " " + currencyElement.attr("content"));
-                } else {
-                    builder.price(price);
+
+            if (host != null && host.toLowerCase().contains("ebay")) {
+                // Title
+                Element titleEl = doc.selectFirst("h1.x-item-title__mainTitle, h1#itemTitle, h1[itemprop=name], h1.ux-textspans");
+                if (titleEl == null) {
+                    titleEl = doc.selectFirst("h1");
                 }
-            }
-            
-            // Location
-            Element countryElement = doc.selectFirst("meta[itemprop=addressCountry]");
-            Element localityElement = doc.selectFirst("meta[itemprop=addressLocality]");
-            if (countryElement != null && localityElement != null) {
-                builder.location(localityElement.attr("content") + ", " + countryElement.attr("content"));
-            }
-            
-            // Ad Info
-            Map<String, String> adInfo = new HashMap<>();
-            Element viewsElement = doc.selectFirst("div.adPage__aside__stats__views");
-            if (viewsElement != null) {
-                adInfo.put("Views", viewsElement.text());
-            }
-            
-            Element dateElement = doc.selectFirst("div.adPage__aside__stats__date");
-            if (dateElement != null) {
-                adInfo.put("Update Date", dateElement.text());
-            }
-            
-            Element adTypeElement = doc.selectFirst("div.adPage__aside__stats__type");
-            if (adTypeElement != null) {
-                adInfo.put("Ad Type", adTypeElement.text());
-            }
-            
-            Element ownerElement = doc.selectFirst("a.adPage__aside__stats__owner__login");
-            if (ownerElement != null) {
-                adInfo.put("Owner Username", ownerElement.text());
-            }
-            
-            builder.adInfo(adInfo);
-            
-            // General Info
-            Map<String, String> generalInfo = new HashMap<>();
-            Element generalDiv = doc.selectFirst("div.adPage__content__features__col");
-            if (generalDiv != null) {
-                generalDiv.select("li").forEach(li -> {
-                    Element keyElement = li.selectFirst("span.adPage__content__features__key");
-                    Element valueElement = li.selectFirst("span.adPage__content__features__value");
-                    if (keyElement != null && valueElement != null) {
-                        generalInfo.put(keyElement.text().trim(), valueElement.text().trim());
+                if (titleEl != null) {
+                    builder.title(titleEl.text().trim());
+                }
+
+                // Price
+                Element priceEl = doc.selectFirst(".x-price-primary, span#prcIsum, span[itemprop=price], .notranslate");
+                if (priceEl == null) {
+                    priceEl = doc.selectFirst("[class*='price'], .price-primary");
+                }
+                if (priceEl != null) {
+                    builder.price(priceEl.text().trim());
+                }
+
+                // Description
+                Element descEl = doc.selectFirst("#viTabs_0_is, .vi-VR-cvipContent, .vim x-item-description");
+                if (descEl != null) {
+                    builder.description(descEl.text().trim());
+                }
+
+                // Location
+                Element locEl = doc.selectFirst(".ux-seller-section__itemLocation, #itemLocation, .ux-labels-values__values-content");
+                if (locEl != null) {
+                    builder.location(locEl.text().trim());
+                }
+
+                // Extract additional information
+                Map<String, String> adInfo = new HashMap<>();
+                
+                // Item ID from URL or page
+                try {
+                    java.util.regex.Matcher itmMatcher = java.util.regex.Pattern.compile("/(?:itm|i|p)/(\\d+)").matcher(url);
+                    if (itmMatcher.find()) {
+                        adInfo.put("Item ID", itmMatcher.group(1));
                     }
-                });
-            }
-            builder.generalInfo(generalInfo);
-            
-            // Features
-            Map<String, String> features = new HashMap<>();
-            Element featuresDiv = doc.selectFirst("div.adPage__content__features__col.grid_7.suffix_1");
-            if (featuresDiv != null) {
-                featuresDiv.select("li").forEach(li -> {
-                    Element keyElement = li.selectFirst("span.adPage__content__features__key");
-                    Element valueElement = li.selectFirst("span.adPage__content__features__value");
-                    if (keyElement != null && valueElement != null) {
-                        features.put(keyElement.text().trim(), valueElement.text().trim());
+                    // Also check page source
+                    java.util.regex.Matcher itemIdMatcher = java.util.regex.Pattern.compile("itemId\\s*:\\s*['\"]?([0-9]+)['\"]?").matcher(doc.html());
+                    if (itemIdMatcher.find()) {
+                        adInfo.put("Item ID", itemIdMatcher.group(1));
                     }
-                });
+                } catch (Exception ignoreId) {}
+                
+                // Condition
+                Element conditionEl = doc.selectFirst("#viTabs_0_is .u-flL.condText, .x-item-condition-label, .u-flL");
+                if (conditionEl != null) {
+                    String condition = conditionEl.text().trim();
+                    if (!condition.isEmpty()) {
+                        adInfo.put("Condition", condition);
+                    }
+                }
+                
+                // Shipping
+                Element shippingEl = doc.selectFirst("#fshippingCost, .shipping-section, .u-flL.shipping3rd");
+                if (shippingEl != null) {
+                    adInfo.put("Shipping", shippingEl.text().trim());
+                }
+                
+                // Seller info
+                Element sellerEl = doc.selectFirst("#mbgLink, .seller-info__name");
+                if (sellerEl != null) {
+                    adInfo.put("Seller", sellerEl.text().trim());
+                }
+                
+                // Quantity available
+                Element qtyEl = doc.selectFirst("#qtySubTxt, .qtyAvailable");
+                if (qtyEl != null) {
+                    adInfo.put("Quantity", qtyEl.text().trim());
+                }
+                
+                // Brand
+                Element brandEl = doc.selectFirst("[itemprop=brand], .ux-labels-values__labels[aria-label*='Brand'] + .ux-labels-values__values");
+                if (brandEl != null) {
+                    adInfo.put("Brand", brandEl.text().trim());
+                }
+
+                builder.adInfo(adInfo);
+
+                // General Info
+                Map<String, String> generalInfo = new HashMap<>();
+                
+                // Extract image
+                Element imgEl = doc.selectFirst("#icImg, img[itemprop=image], .img-wrapper img");
+                if (imgEl != null) {
+                    String imgSrc = imgEl.attr("src");
+                    if (imgSrc == null || imgSrc.isEmpty()) {
+                        imgSrc = imgEl.attr("data-src");
+                    }
+                    if (imgSrc != null && !imgSrc.isEmpty()) {
+                        generalInfo.put("Image URL", imgSrc);
+                    }
+                }
+                
+                // Extract specifications/features
+                Elements specs = doc.select(".ux-labels-values__labels, .itemAttr");
+                for (Element spec : specs) {
+                    String label = spec.text().trim();
+                    Element valueEl = spec.nextElementSibling();
+                    if (valueEl == null) {
+                        valueEl = spec.parent().selectFirst(".ux-labels-values__values");
+                    }
+                    if (valueEl != null && !label.isEmpty()) {
+                        String value = valueEl.text().trim();
+                        if (!value.isEmpty()) {
+                            generalInfo.put(label, value);
+                        }
+                    }
+                }
+
+                builder.generalInfo(generalInfo);
+
+                return builder.build();
             }
-            builder.features(features);
+
+            // Generic fallback for non-eBay sites
+            Element titleEl = doc.selectFirst("title, h1");
+            if (titleEl != null) {
+                builder.title(titleEl.text().trim());
+            }
+            Element priceEl = doc.selectFirst("[class*='price'], .price, .amount");
+            if (priceEl != null) {
+                builder.price(priceEl.text().trim());
+            }
             
             return builder.build();
-            
+
         } catch (IOException e) {
             log.error("Error extracting product info from {}: {}", url, e.getMessage());
             throw new RuntimeException("Failed to extract product info: " + e.getMessage(), e);
         }
     }
 }
-

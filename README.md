@@ -59,9 +59,17 @@ Separated into two services:
 
 ### Running Distributed Monolith
 
+The services will automatically rebuild on each `docker-compose up`:
+
 ```bash
 cd distributed-monolith
 docker-compose up --build
+```
+
+**Or use the convenience script:**
+```bash
+cd distributed-monolith
+./docker-compose.up.sh
 ```
 
 The application will be available at:
@@ -70,9 +78,17 @@ The application will be available at:
 
 ### Running Microservices
 
+The services will automatically rebuild on each `docker-compose up`:
+
 ```bash
 cd microservices
 docker-compose up --build
+```
+
+**Or use the convenience script:**
+```bash
+cd microservices
+./docker-compose.up.sh
 ```
 
 Services will be available at:

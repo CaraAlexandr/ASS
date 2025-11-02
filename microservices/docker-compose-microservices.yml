@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: microservices-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  db:
+    image: postgres:15-alpine
+    container_name: microservices-db
+    environment:
+      POSTGRES_DB: scraperdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_microservices:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  producer-service:
+    image: maven:3.9.6-eclipse-temurin-21
+    container_name: producer-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    working_dir: /app
+    volumes:
+      - ./producer-service:/app
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - "8081:8081"
+    command: sh -c "mvn clean package -DskipTests && java -jar target/*.jar"
+#    restart: unless-stopped
+
+  consumer-service:
+    image: maven:3.9.6-eclipse-temurin-21
+    container_name: consumer-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    working_dir: /app
+    volumes:
+      - ./consumer-service:/app
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+      DB_HOST: db
+      DB_NAME: scraperdb
+      DB_USER: admin
+      DB_PASSWORD: adminpass
+    ports:
+      - "8082:8082"
+    command: sh -c "mvn clean package -DskipTests && java -jar target/*.jar"
+#    restart: unless-stopped
+
+volumes:
+  rabbitmq_data:
+  postgres_data_microservices:
+
