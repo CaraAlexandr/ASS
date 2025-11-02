@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: producer-service
+  
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    connection-timeout: 10000
+
+server:
+  port: 8081
+
+queue:
+  name: url_queue
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.scraper: DEBUG
+    org.springframework.amqp: INFO
+

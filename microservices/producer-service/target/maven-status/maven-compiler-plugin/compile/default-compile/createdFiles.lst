@@ -1,0 +1,6 @@
+com/scraper/producer/ProducerServiceApplication.class
+com/scraper/producer/config/RabbitMQConfig.class
+com/scraper/producer/service/MessageProducerService.class
+com/scraper/producer/config/OpenApiConfig.class
+com/scraper/producer/service/WebScraperService.class
+com/scraper/producer/controller/ProducerController.class

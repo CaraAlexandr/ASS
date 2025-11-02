@@ -3,6 +3,7 @@ package com.scraper.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scraper.dto.ProductInfo;
+import com.scraper.dto.ProductResponse;
 import com.scraper.entity.ProductDetails;
 import com.scraper.repository.ProductDetailsRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +37,13 @@ public class ProductService {
         ProductInfo productInfo = scraperService.extractProductInfo(url);
         
         try {
+            String safeUrl = cap(url, 255);
             ProductDetails productDetails = ProductDetails.builder()
-                    .url(url)
+                    .url(safeUrl)
                     .title(productInfo.getTitle())
                     .description(productInfo.getDescription())
-                    .price(productInfo.getPrice())
-                    .location(productInfo.getLocation())
+                    .price(cap(productInfo.getPrice(), 255))
+                    .location(cap(productInfo.getLocation(), 255))
                     .adInfo(toJson(productInfo.getAdInfo()))
                     .generalInfo(toJson(productInfo.getGeneralInfo()))
                     .features(toJson(productInfo.getFeatures()))
@@ -62,35 +65,70 @@ public class ProductService {
             log.debug("Product already exists: {}", url);
             return;
         }
-        
+
+        String safeUrl = cap(url, 255);
+        if (!safeUrl.equals(url)) {
+            log.warn("URL truncated from {} to {} characters to fit DB column", url.length(), safeUrl.length());
+        }
+
+        log.info("Saving product: url={}, title={}, price={}", safeUrl, productInfo.getTitle(), productInfo.getPrice());
+
         ProductDetails productDetails = ProductDetails.builder()
-                .url(url)
+                .url(safeUrl)
                 .title(productInfo.getTitle())
                 .description(productInfo.getDescription())
-                .price(productInfo.getPrice())
-                .location(productInfo.getLocation())
+                .price(cap(productInfo.getPrice(), 255))
+                .location(cap(productInfo.getLocation(), 255))
                 .adInfo(toJson(productInfo.getAdInfo()))
                 .generalInfo(toJson(productInfo.getGeneralInfo()))
                 .features(toJson(productInfo.getFeatures()))
                 .build();
-        
-        repository.save(productDetails);
+
+        ProductDetails saved = repository.save(productDetails);
+        log.info("Product saved successfully with ID: {}", saved.getId());
     }
     
-    public List<ProductDetails> getAllProducts() {
-        return repository.findAll();
+    public List<ProductResponse> getAllProducts() {
+        List<ProductDetails> products = repository.findAll();
+        log.info("Found {} products in database", products.size());
+
+        return products.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private ProductResponse convertToResponse(ProductDetails entity) {
+        return ProductResponse.builder()
+                .id(entity.getId())
+                .url(entity.getUrl())
+                .title(entity.getTitle())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
+                .location(entity.getLocation())
+                .adInfo(entity.getAdInfo())
+                .generalInfo(entity.getGeneralInfo())
+                .features(entity.getFeatures())
+                .createdAt(entity.getCreatedAt() != null ? entity.getCreatedAt().toString() : null)
+                .build();
     }
     
     private String toJson(Object obj) {
         if (obj == null) {
-            return null;
+            return "{}"; // Return empty JSON object instead of null
         }
         try {
-            return objectMapper.writeValueAsString(obj);
+            String json = objectMapper.writeValueAsString(obj);
+            return json != null ? json : "{}";
         } catch (JsonProcessingException e) {
             log.error("Error converting to JSON: {}", e.getMessage());
-            return null;
+            return "{}"; // Return empty JSON object on error
         }
+    }
+
+    private String cap(String value, int maxLen) {
+        if (value == null) return null;
+        if (value.length() <= maxLen) return value;
+        return value.substring(0, maxLen);
     }
 }
 

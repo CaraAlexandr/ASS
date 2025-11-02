@@ -29,12 +29,18 @@ public class ProductService {
         }
         
         try {
+            // Truncate URL and other fields to prevent DB errors
+            String safeUrl = truncate(url, 500);
+            if (!safeUrl.equals(url)) {
+                log.warn("URL truncated from {} to {} characters to fit DB column", url.length(), safeUrl.length());
+            }
+            
             ProductDetails productDetails = ProductDetails.builder()
-                    .url(url)
+                    .url(safeUrl)
                     .title(productInfo.getTitle())
                     .description(productInfo.getDescription())
-                    .price(productInfo.getPrice())
-                    .location(productInfo.getLocation())
+                    .price(truncate(productInfo.getPrice(), 255))
+                    .location(truncate(productInfo.getLocation(), 255))
                     .adInfo(toJson(productInfo.getAdInfo()))
                     .generalInfo(toJson(productInfo.getGeneralInfo()))
                     .features(toJson(productInfo.getFeatures()))
@@ -55,14 +61,21 @@ public class ProductService {
     
     private String toJson(Object obj) {
         if (obj == null) {
-            return null;
+            return "{}"; // Return empty JSON object instead of null
         }
         try {
-            return objectMapper.writeValueAsString(obj);
+            String json = objectMapper.writeValueAsString(obj);
+            return json != null ? json : "{}";
         } catch (JsonProcessingException e) {
             log.error("Error converting to JSON: {}", e.getMessage());
-            return null;
+            return "{}"; // Return empty JSON object on error
         }
+    }
+    
+    private String truncate(String value, int maxLen) {
+        if (value == null) return null;
+        if (value.length() <= maxLen) return value;
+        return value.substring(0, maxLen);
     }
 }
 

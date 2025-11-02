@@ -25,9 +25,9 @@ public class ProducerController {
     
     @PostMapping("/start")
     @Operation(summary = "Start scraping and publish URLs", 
-               description = "Start scraping product URLs from 999.md and publish them to RabbitMQ")
+               description = "Start scraping product URLs from eBay and publish them to RabbitMQ")
     public ResponseEntity<Map<String, Object>> startScraping(
-            @RequestParam(defaultValue = "https://999.md/ru/list/animals-and-plants/the-birds") String startingUrl,
+            @RequestParam(defaultValue = "https://www.ebay.com/b/Cell-Phones-Smartphones/9355/bn_320094") String startingUrl,
             @RequestParam(defaultValue = "10") int maxPages) {
         
         log.info("Starting scraping from: {} with max pages: {}", startingUrl, maxPages);
