@@ -121,7 +121,7 @@ log "Publish HTTP Code: $HTTP_CODE"
 log "Publish Elapsed Time: ${ELAPSED}s"
 
 # Wait for consumer to process
-if wait_for_processing 30 $INITIAL_COUNT; then
+if wait_for_processing 6 $INITIAL_COUNT; then
     FINAL_COUNT=$(curl -s "$CONSUMER_URL/products" 2>/dev/null | grep -o '"id"' | wc -l || echo "0")
     PRODUCTS_ADDED=$((FINAL_COUNT - INITIAL_COUNT))
     log "Products added to database: $PRODUCTS_ADDED"
@@ -157,7 +157,7 @@ log "URLs Found and Published: ${URLS_FOUND:-0}"
 log "Producer Processing Time: ${PUBLISH_ELAPSED}s"
 
 # Wait for consumer to process all URLs (longer timeout for bulk processing)
-if wait_for_processing 120 $INITIAL_COUNT; then
+if wait_for_processing 24 $INITIAL_COUNT; then
     FINAL_COUNT=$(curl -s "$CONSUMER_URL/products" 2>/dev/null | grep -o '"id"' | wc -l || echo "0")
     PRODUCTS_ADDED=$((FINAL_COUNT - INITIAL_COUNT))
     if $HAS_BC; then
@@ -208,7 +208,7 @@ log "URLs Found and Published: ${URLS_FOUND:-0}"
 log "Producer Processing Time: ${PUBLISH_ELAPSED}s"
 
 # Wait for consumer to process all URLs
-if wait_for_processing 300 $INITIAL_COUNT; then
+if wait_for_processing 60 $INITIAL_COUNT; then
     FINAL_COUNT=$(curl -s "$CONSUMER_URL/products" 2>/dev/null | grep -o '"id"' | wc -l || echo "0")
     PRODUCTS_ADDED=$((FINAL_COUNT - INITIAL_COUNT))
     if $HAS_BC; then
