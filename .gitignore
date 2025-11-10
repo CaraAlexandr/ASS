@@ -8,3 +8,7 @@ distributed-monolith/target/
 microservices/consumer-service/target/
 
 microservices/producer-service/target/
+
+performance-tests/microservices-results.txt
+
+performance-tests/monolith-results.txt
