@@ -28,7 +28,7 @@ public class ScraperController {
     @PostMapping("/start")
     @Operation(summary = "Start scraping", description = "Extract products directly from 999.md listing pages and save to database")
     public ResponseEntity<Map<String, Object>> startScraping(
-            @RequestParam(defaultValue = "https://999.md/ro/list/transport/cars") String startingUrl,
+            @RequestParam(defaultValue = "https://www.ebay.com/sch/i.html?_nkw=cell+phones") String startingUrl,
             @RequestParam(defaultValue = "5") int maxPages) {
         
         log.info("Starting scraping from listing page: {} with max pages: {}", startingUrl, maxPages);
