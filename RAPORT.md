@@ -203,6 +203,10 @@ Un **monolit distribuit** este o aplicație care păstrează structura internă 
 | **Debugging** | Simplu | Complex |
 | **Testare** | Simplă | Complexă |
 
+**Diagramă Comparativă:**
+
+![Diagramă Comparativă Arhitecturi](images/Architecture%20Comparison.png)
+
 ### 2.4 Când să Alegi Fiecare Arhitectură?
 
 **Alege Monolit Distribuit când:**
@@ -242,12 +246,20 @@ Distributed Monolith Application
     └── ProductDetails (database model)
 ```
 
+**Diagramă de Arhitectură:**
+
+![Arhitectură Monolit Distribuit](images/Distributed%20Monolith%20Architecture.png)
+
 **Fluxul de Date:**
 1. Client trimite request la `/api/scraper/start`
 2. `ScraperController` primește request-ul
 3. `WebScraperService` extrage produsele de pe site-uri
 4. `ProductService` salvează produsele în baza de date
 5. Răspuns sincron către client
+
+**Diagramă de Secvență:**
+
+![Secvență Monolit Distribuit](images/Distributed%20Monolith%20Sequence.png)
 
 #### 3.1.2 Comunicare Internă
 
@@ -274,6 +286,10 @@ Scalabilitatea se realizează prin:
 - Nu poți scala doar partea de scraping sau doar partea de salvare
 - Toate instanțele trebuie să aibă resurse pentru toate funcționalitățile
 
+**Diagramă de Scalabilitate:**
+
+![Scalabilitate Monolit Distribuit](images/Distributed%20Monolith%20Scalability.png)
+
 ### 3.2 Arhitectura Microservicii
 
 #### 3.2.1 Structura Aplicației
@@ -298,6 +314,10 @@ Microservices Architecture
     └── PostgreSQL (shared database)
 ```
 
+**Diagramă de Arhitectură:**
+
+![Arhitectură Microservicii](images/Microservices%20Architecture.png)
+
 **Fluxul de Date:**
 1. Client trimite request la Producer Service `/api/producer/start`
 2. Producer Service extrage URL-urile produselor
@@ -306,6 +326,10 @@ Microservices Architecture
 5. Consumer Service extrage informațiile produselor
 6. Consumer Service salvează în baza de date
 7. Răspuns asincron (Producer răspunde imediat, procesarea continuă în background)
+
+**Diagramă de Secvență:**
+
+![Secvență Microservicii](images/Microservices%20Sequence.png)
 
 #### 3.2.2 Comunicare între Servicii
 
@@ -341,6 +365,10 @@ Scalabilitatea se realizează prin:
 - Poți scala doar serviciul care are nevoie de mai multe resurse
 - RabbitMQ distribuie automat mesajele între consumatori
 - Resiliență: dacă un consumer eșuează, alții continuă procesarea
+
+**Diagramă de Scalabilitate:**
+
+![Scalabilitate Microservicii](images/Microservices%20Scalability.png)
 
 ### 3.3 Pattern-uri Utilizate
 
@@ -530,6 +558,10 @@ services:
     ports: ["8082:8082"]
     depends_on: [rabbitmq, db]
 ```
+
+**Diagramă de Deployment:**
+
+![Diagramă de Deployment](images/Deployment%20Diagram.png)
 
 #### 4.3.4 Metrici de Performanță
 
