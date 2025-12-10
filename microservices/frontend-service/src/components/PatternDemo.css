@@ -1,0 +1,110 @@
+.pattern-demo-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.demo-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.help-text {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.result-details {
+  margin: 20px 0;
+  padding: 15px;
+  background: white;
+  border-radius: 5px;
+}
+
+.result-details p {
+  margin: 10px 0;
+  color: #333;
+}
+
+.success-text {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.error-text {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.result-json {
+  margin-top: 20px;
+}
+
+.result-json summary {
+  cursor: pointer;
+  padding: 10px;
+  background: #e9ecef;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.result-json pre {
+  background: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-size: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.pattern-explanation {
+  margin-top: 30px;
+  padding: 20px;
+  background: #e3f2fd;
+  border-radius: 5px;
+  border-left: 4px solid #1976d2;
+}
+
+.pattern-explanation h4 {
+  color: #1976d2;
+  margin-bottom: 15px;
+}
+
+.pattern-explanation ul {
+  margin-left: 20px;
+  color: #333;
+  line-height: 1.8;
+}
+
+.pattern-explanation li {
+  margin-bottom: 10px;
+}
+
+.pattern-explanation code {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+

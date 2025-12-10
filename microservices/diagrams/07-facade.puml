@@ -1,0 +1,56 @@
+@startuml Facade
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Facade Pattern
+
+package "com.scraper.producer.pattern.structural.facade" {
+  class ScrapingFacade {
+    - rabbitTemplate: RabbitTemplate
+    - queueName: String
+    + scrapeAndPublish(config: ScrapingConfig): ScrapingResult
+    - createDecoratedScraper(scraper: Scraper, config: ScrapingConfig): ScraperDecorator
+    - publishUrls(urls: List<String>): int
+  }
+  
+  class ScrapingResult {
+    - urlsFound: int
+    - urlsPublished: int
+    - success: boolean
+    - message: String
+  }
+}
+
+package "Complex Subsystem" {
+  class ScraperFactory
+  class ScraperDecorator
+  class RabbitTemplate
+  class ScrapingConfig
+}
+
+ScrapingFacade --> ScraperFactory : uses
+ScrapingFacade --> ScraperDecorator : uses
+ScrapingFacade --> RabbitTemplate : uses
+ScrapingFacade --> ScrapingConfig : uses
+ScrapingFacade ..> ScrapingResult : returns
+
+note right of ScrapingFacade
+  Provides simple interface to complex subsystem:
+  
+  Client code:
+  result = facade.scrapeAndPublish(config)
+  
+  Instead of:
+  scraper = factory.create(...)
+  decorated = decorate(scraper)
+  urls = decorated.scrape(...)
+  publish(urls)
+  
+  Hides complexity of:
+  - Factory creation
+  - Decorator chaining
+  - Message publishing
+end note
+
+@enduml
+

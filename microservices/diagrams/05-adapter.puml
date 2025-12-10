@@ -1,0 +1,35 @@
+@startuml Adapter
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Adapter Pattern
+
+package "com.scraper.producer.pattern.structural.adapter" {
+  class MessageAdapter {
+    - objectMapper: ObjectMapper
+    + MessageAdapter()
+    + adaptToJson(url: String): String
+    + adaptFromJson(jsonMessage: String): String
+    + adaptBatchToJson(urls: List<String>): String
+  }
+}
+
+package "External" {
+  class "Plain String URL" as PlainString
+  class "JSON Message" as JSONMessage
+}
+
+MessageAdapter --> PlainString : adapts from
+MessageAdapter --> JSONMessage : adapts to
+
+note right of MessageAdapter
+  Adapts between incompatible formats:
+  - Plain string: "https://example.com"
+  - JSON: {"url":"...","timestamp":1234,"type":"product_url"}
+  
+  Allows systems expecting different
+  formats to work together
+end note
+
+@enduml
+

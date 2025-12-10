@@ -1,5 +1,6 @@
 package com.scraper.producer.controller;
 
+import com.scraper.producer.service.EnhancedScrapingService;
 import com.scraper.producer.service.MessageProducerService;
 import com.scraper.producer.service.WebScraperService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/producer")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://127.0.0.1:3000"})
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Producer", description = "Producer service operations")
@@ -22,6 +24,7 @@ public class ProducerController {
     
     private final WebScraperService scraperService;
     private final MessageProducerService messageProducerService;
+    private final EnhancedScrapingService enhancedScrapingService;
     
     @PostMapping("/start")
     @Operation(summary = "Start scraping and publish URLs", 
@@ -41,6 +44,38 @@ public class ProducerController {
                 "urlsPublished", urls.size(),
                 "status", "completed"
         ));
+    }
+    
+    @PostMapping("/start-enhanced")
+    @Operation(summary = "Start enhanced scraping with design patterns", 
+               description = "Start scraping using all design patterns (Factory, Builder, Strategy, Observer, etc.)")
+    public ResponseEntity<Map<String, Object>> startEnhancedScraping(
+            @RequestParam(defaultValue = "https://www.ebay.com/sch/i.html?_nkw=cell+phones") String startingUrl,
+            @RequestParam(defaultValue = "10") int maxPages,
+            @RequestParam(defaultValue = "balanced") String strategy) {
+        
+        log.info("Starting enhanced scraping with patterns from: {} with max pages: {} and strategy: {}", 
+                startingUrl, maxPages, strategy);
+        
+        EnhancedScrapingService.ScrapingResult result = 
+                enhancedScrapingService.scrapeWithAllPatterns(startingUrl, maxPages, strategy);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", result.isSuccess() ? "Enhanced scraping completed" : "Enhanced scraping failed");
+        response.put("urlsFound", result.getUrlsFound());
+        response.put("urlsPublished", result.getUrlsPublished());
+        response.put("status", result.isSuccess() ? "completed" : "failed");
+        response.put("error", result.getMessage());
+        
+        // Add metrics from Observer pattern
+        var metrics = enhancedScrapingService.getMetricsObserver();
+        response.put("metrics", Map.of(
+                "totalOperations", metrics.getTotalOperations(),
+                "totalUrlsScraped", metrics.getTotalUrlsScraped(),
+                "totalErrors", metrics.getTotalErrors()
+        ));
+        
+        return ResponseEntity.ok(response);
     }
     
     @PostMapping("/publish")

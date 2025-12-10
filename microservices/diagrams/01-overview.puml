@@ -1,0 +1,26 @@
+@startuml Design Patterns Overview
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Design Patterns Implementation - Overview
+
+package "Creational Patterns" {
+  [Factory Method]
+  [Builder]
+  [Abstract Factory]
+}
+
+package "Structural Patterns" {
+  [Adapter]
+  [Decorator]
+  [Facade]
+}
+
+package "Behavioral Patterns" {
+  [Strategy]
+  [Observer]
+  [Template Method]
+}
+
+@enduml
+

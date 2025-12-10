@@ -1,0 +1,53 @@
+@startuml PatternIntegration
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Pattern Integration - All Patterns Working Together
+
+package "EnhancedScrapingService" {
+  class EnhancedScrapingService {
+    - scrapingFacade: ScrapingFacade
+    - messageAdapter: MessageAdapter
+    - scrapingSubject: ScrapingSubject
+    + scrapeWithAllPatterns(url, maxPages, strategy): ScrapingResult
+  }
+}
+
+package "Patterns Used" {
+  class BuilderPattern <<pattern>>
+  class FactoryMethodPattern <<pattern>>
+  class AbstractFactoryPattern <<pattern>>
+  class StrategyPattern <<pattern>>
+  class ObserverPattern <<pattern>>
+  class TemplateMethodPattern <<pattern>>
+  class AdapterPattern <<pattern>>
+  class DecoratorPattern <<pattern>>
+  class FacadePattern <<pattern>>
+}
+
+EnhancedScrapingService ..> BuilderPattern : "1. creates config"
+EnhancedScrapingService ..> FactoryMethodPattern : "2. creates scraper"
+EnhancedScrapingService ..> AbstractFactoryPattern : "3. creates families"
+EnhancedScrapingService ..> StrategyPattern : "4. executes scraping"
+EnhancedScrapingService ..> ObserverPattern : "5. notifies events"
+EnhancedScrapingService ..> TemplateMethodPattern : "6. defines algorithm"
+EnhancedScrapingService ..> AdapterPattern : "7. adapts messages"
+EnhancedScrapingService ..> FacadePattern : "8. simplifies workflow"
+FacadePattern ..> DecoratorPattern : "9. uses internally"
+
+note right of EnhancedScrapingService
+  **Execution Flow:**
+  
+  1. Builder creates ScrapingConfig
+  2. Factory Method creates appropriate scraper
+  3. Abstract Factory ensures compatible objects
+  4. Strategy executes scraping algorithm
+  5. Observer tracks events and metrics
+  6. Template Method defines algorithm structure
+  7. Adapter converts URLs to JSON
+  8. Facade simplifies the entire workflow
+  9. Decorator adds features (caching, retry, logging)
+end note
+
+@enduml
+

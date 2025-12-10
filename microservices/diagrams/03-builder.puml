@@ -1,0 +1,65 @@
+@startuml Builder
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Builder Pattern
+
+package "com.scraper.producer.pattern.creational.builder" {
+  class ScrapingConfig {
+    - startingUrl: String
+    - maxPages: int
+    - timeout: int
+    - delayBetweenRequests: int
+    - userAgent: String
+    - followRedirects: boolean
+    - maxBodySize: int
+    - enableCaching: boolean
+    + getStartingUrl(): String
+    + getMaxPages(): int
+    + getTimeout(): int
+    + isEnableCaching(): boolean
+    + {static} builder(): Builder
+    --
+    + Builder startingUrl(url: String): Builder
+    + Builder maxPages(pages: int): Builder
+    + Builder timeout(ms: int): Builder
+    + Builder enableCaching(enable: boolean): Builder
+    + Builder build(): ScrapingConfig
+  }
+  
+  class Builder {
+    - startingUrl: String
+    - maxPages: int
+    - timeout: int
+    - delayBetweenRequests: int
+    - userAgent: String
+    - followRedirects: boolean
+    - maxBodySize: int
+    - enableCaching: boolean
+    + startingUrl(url: String): Builder
+    + maxPages(pages: int): Builder
+    + timeout(ms: int): Builder
+    + delayBetweenRequests(delay: int): Builder
+    + userAgent(ua: String): Builder
+    + followRedirects(follow: boolean): Builder
+    + maxBodySize(size: int): Builder
+    + enableCaching(enable: boolean): Builder
+    + build(): ScrapingConfig
+  }
+}
+
+ScrapingConfig *-- Builder : nested class
+
+note right of ScrapingConfig
+  Usage:
+  ScrapingConfig config = 
+    ScrapingConfig.builder()
+      .startingUrl(url)
+      .maxPages(10)
+      .timeout(30000)
+      .enableCaching(true)
+      .build();
+end note
+
+@enduml
+

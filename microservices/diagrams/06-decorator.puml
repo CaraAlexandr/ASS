@@ -1,0 +1,65 @@
+@startuml Decorator
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Decorator Pattern
+
+package "com.scraper.producer.pattern.structural.decorator" {
+  interface ScraperDecorator {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + getSupportedDomain(): String
+  }
+  
+  abstract class BaseScraperDecorator {
+    # scraper: Scraper
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + getSupportedDomain(): String
+  }
+  
+  class LoggingScraperDecorator {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    - logStartTime()
+    - logDuration()
+  }
+  
+  class CachingScraperDecorator {
+    - cache: Map<String, List<String>>
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + clearCache(): void
+  }
+  
+  class RetryScraperDecorator {
+    - maxRetries: int
+    - retryDelayMs: long
+    + scrapeUrls(url: String, maxPages: int): List<String>
+  }
+}
+
+package "com.scraper.producer.pattern.creational.factory" {
+  interface Scraper
+}
+
+ScraperDecorator <|-- BaseScraperDecorator
+BaseScraperDecorator <|-- LoggingScraperDecorator
+BaseScraperDecorator <|-- CachingScraperDecorator
+BaseScraperDecorator <|-- RetryScraperDecorator
+BaseScraperDecorator --> Scraper : wraps
+
+ScraperDecorator <|.. Scraper
+
+note right of BaseScraperDecorator
+  Decorators can be chained:
+  new LoggingDecorator(
+    new RetryDecorator(
+      new CachingDecorator(scraper)
+    )
+  )
+  
+  Adds functionality dynamically:
+  - Logging: Performance metrics
+  - Caching: Avoid duplicate requests
+  - Retry: Handle failures
+end note
+
+@enduml
+

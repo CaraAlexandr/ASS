@@ -1,0 +1,58 @@
+@startuml Strategy
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Strategy Pattern
+
+package "com.scraper.producer.pattern.behavioral.strategy" {
+  interface ScrapingStrategy {
+    + execute(url: String, maxPages: int): List<String>
+    + getStrategyName(): String
+  }
+  
+  class ScrapingContext {
+    - strategy: ScrapingStrategy
+    + ScrapingContext(strategy: ScrapingStrategy)
+    + setStrategy(strategy: ScrapingStrategy): void
+    + executeScraping(url: String, maxPages: int): List<String>
+    + getCurrentStrategyName(): String
+  }
+  
+  package "impl" {
+    class AggressiveScrapingStrategy {
+      + execute(url: String, maxPages: int): List<String>
+      + getStrategyName(): String
+    }
+    
+    class ConservativeScrapingStrategy {
+      + execute(url: String, maxPages: int): List<String>
+      + getStrategyName(): String
+    }
+    
+    class BalancedScrapingStrategy {
+      + execute(url: String, maxPages: int): List<String>
+      + getStrategyName(): String
+    }
+  }
+}
+
+ScrapingStrategy <|.. AggressiveScrapingStrategy
+ScrapingStrategy <|.. ConservativeScrapingStrategy
+ScrapingStrategy <|.. BalancedScrapingStrategy
+
+ScrapingContext --> ScrapingStrategy : uses
+
+note right of ScrapingContext
+  Allows switching algorithms at runtime:
+  
+  context = new ScrapingContext(new BalancedStrategy())
+  context.setStrategy(new AggressiveStrategy())
+  
+  Strategies:
+  - Aggressive: maxPages * 2, no delays
+  - Conservative: maxPages / 2, rate limited
+  - Balanced: standard approach
+end note
+
+@enduml
+

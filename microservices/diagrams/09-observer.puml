@@ -1,0 +1,69 @@
+@startuml Observer
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Observer Pattern
+
+package "com.scraper.producer.pattern.behavioral.observer" {
+  interface ScrapingObserver {
+    + onScrapingStarted(url: String): void
+    + onScrapingProgress(url: String, urlsFound: int): void
+    + onScrapingCompleted(url: String, totalUrls: int): void
+    + onScrapingError(url: String, error: String): void
+  }
+  
+  class ScrapingSubject {
+    - observers: List<ScrapingObserver>
+    + attach(observer: ScrapingObserver): void
+    + detach(observer: ScrapingObserver): void
+    + notifyScrapingStarted(url: String): void
+    + notifyScrapingProgress(url: String, urlsFound: int): void
+    + notifyScrapingCompleted(url: String, totalUrls: int): void
+    + notifyScrapingError(url: String, error: String): void
+  }
+  
+  package "impl" {
+    class LoggingObserver {
+      + onScrapingStarted(url: String): void
+      + onScrapingProgress(url: String, urlsFound: int): void
+      + onScrapingCompleted(url: String, totalUrls: int): void
+      + onScrapingError(url: String, error: String): void
+    }
+    
+    class MetricsObserver {
+      - totalOperations: AtomicInteger
+      - totalUrlsScraped: AtomicInteger
+      - totalErrors: AtomicInteger
+      - totalScrapingTime: AtomicLong
+      + onScrapingStarted(url: String): void
+      + onScrapingCompleted(url: String, totalUrls: int): void
+      + onScrapingError(url: String, error: String): void
+      + getTotalOperations(): int
+      + getTotalUrlsScraped(): int
+      + getTotalErrors(): int
+    }
+  }
+}
+
+ScrapingObserver <|.. LoggingObserver
+ScrapingObserver <|.. MetricsObserver
+
+ScrapingSubject --> ScrapingObserver : notifies
+ScrapingSubject o-- ScrapingObserver : manages
+
+note right of ScrapingSubject
+  Subject notifies all observers when events occur:
+  
+  subject.attach(new LoggingObserver())
+  subject.attach(new MetricsObserver())
+  
+  subject.notifyScrapingStarted(url)
+  → LoggingObserver logs event
+  → MetricsObserver tracks metrics
+  
+  Loose coupling: Subject doesn't know
+  concrete observer types
+end note
+
+@enduml
+

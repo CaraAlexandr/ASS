@@ -1,0 +1,76 @@
+@startuml AbstractFactory
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Abstract Factory Pattern
+
+package "com.scraper.producer.pattern.creational.abstractfactory" {
+  interface AbstractScraperFactory {
+    + createScraper(): ScraperProduct
+    + createExtractor(): ExtractorProduct
+  }
+  
+  interface ScraperProduct {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+  }
+  
+  interface ExtractorProduct {
+    + extractData(url: String): Map<String, String>
+  }
+  
+  class ScraperFactory {
+    + {static} getFactory(url: String): AbstractScraperFactory
+  }
+  
+  package "impl" {
+    class EbayScraperFactory {
+      + createScraper(): ScraperProduct
+      + createExtractor(): ExtractorProduct
+    }
+    
+    class GenericScraperFactory {
+      + createScraper(): ScraperProduct
+      + createExtractor(): ExtractorProduct
+    }
+    
+    class EbayScraper {
+      + scrapeUrls(url: String, maxPages: int): List<String>
+    }
+    
+    class GenericScraper {
+      + scrapeUrls(url: String, maxPages: int): List<String>
+    }
+    
+    class EbayExtractor {
+      + extractData(url: String): Map<String, String>
+    }
+    
+    class GenericExtractor {
+      + extractData(url: String): Map<String, String>
+    }
+  }
+}
+
+AbstractScraperFactory <|.. EbayScraperFactory
+AbstractScraperFactory <|.. GenericScraperFactory
+ScraperProduct <|.. EbayScraper
+ScraperProduct <|.. GenericScraper
+ExtractorProduct <|.. EbayExtractor
+ExtractorProduct <|.. GenericExtractor
+
+EbayScraperFactory ..> EbayScraper : creates
+EbayScraperFactory ..> EbayExtractor : creates
+GenericScraperFactory ..> GenericScraper : creates
+GenericScraperFactory ..> GenericExtractor : creates
+
+ScraperFactory ..> AbstractScraperFactory : returns
+
+note right of AbstractScraperFactory
+  Creates families of related objects:
+  - eBay Factory → eBay Scraper + eBay Extractor
+  - Generic Factory → Generic Scraper + Generic Extractor
+  Ensures compatible object pairs
+end note
+
+@enduml
+
