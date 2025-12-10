@@ -1,0 +1,47 @@
+@startuml FactoryMethod
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Factory Method Pattern
+
+package "com.scraper.producer.pattern.creational.factory" {
+  interface Scraper {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + getSupportedDomain(): String
+  }
+  
+  class ScraperFactory {
+    + {static} createScraper(url: String): Scraper
+  }
+  
+  package "impl" {
+    class EbayScraper {
+      - BASE_URL: String
+      - TIMEOUT: int
+      + scrapeUrls(url: String, maxPages: int): List<String>
+      + getSupportedDomain(): String
+    }
+    
+    class GenericScraper {
+      - TIMEOUT: int
+      + scrapeUrls(url: String, maxPages: int): List<String>
+      + getSupportedDomain(): String
+    }
+  }
+}
+
+Scraper <|.. EbayScraper
+Scraper <|.. GenericScraper
+ScraperFactory ..> Scraper : creates
+ScraperFactory ..> EbayScraper : creates
+ScraperFactory ..> GenericScraper : creates
+
+note right of ScraperFactory
+  Creates appropriate scraper
+  based on URL domain
+  - eBay URLs → EbayScraper
+  - Other URLs → GenericScraper
+end note
+
+@enduml
+

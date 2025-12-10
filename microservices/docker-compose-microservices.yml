@@ -77,6 +77,19 @@ services:
     command: sh -c "mvn clean package -DskipTests && java -jar target/*.jar"
 #    restart: unless-stopped
 
+  frontend-service:
+    build:
+      context: ./frontend-service
+      dockerfile: Dockerfile
+    container_name: frontend-service
+    depends_on:
+      - producer-service
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8081
+#    restart: unless-stopped
+
 volumes:
   rabbitmq_data:
   postgres_data_microservices:

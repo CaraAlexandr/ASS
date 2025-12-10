@@ -1,0 +1,597 @@
+@startuml Design Patterns Overview
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Design Patterns Implementation - Overview
+
+package "Creational Patterns" {
+  [Factory Method]
+  [Builder]
+  [Abstract Factory]
+}
+
+package "Structural Patterns" {
+  [Adapter]
+  [Decorator]
+  [Facade]
+}
+
+package "Behavioral Patterns" {
+  [Strategy]
+  [Observer]
+  [Template Method]
+}
+
+@enduml
+
+@startuml FactoryMethod
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Factory Method Pattern
+
+package "com.scraper.producer.pattern.creational.factory" {
+  interface Scraper {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + getSupportedDomain(): String
+  }
+  
+  class ScraperFactory {
+    + {static} createScraper(url: String): Scraper
+  }
+  
+  package "impl" {
+    class EbayScraper {
+      - BASE_URL: String
+      - TIMEOUT: int
+      + scrapeUrls(url: String, maxPages: int): List<String>
+      + getSupportedDomain(): String
+    }
+    
+    class GenericScraper {
+      - TIMEOUT: int
+      + scrapeUrls(url: String, maxPages: int): List<String>
+      + getSupportedDomain(): String
+    }
+  }
+}
+
+Scraper <|.. EbayScraper
+Scraper <|.. GenericScraper
+ScraperFactory ..> Scraper : creates
+ScraperFactory ..> EbayScraper : creates
+ScraperFactory ..> GenericScraper : creates
+
+note right of ScraperFactory
+  Creates appropriate scraper
+  based on URL domain
+  - eBay URLs → EbayScraper
+  - Other URLs → GenericScraper
+end note
+
+@enduml
+
+@startuml Builder
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Builder Pattern
+
+package "com.scraper.producer.pattern.creational.builder" {
+  class ScrapingConfig {
+    - startingUrl: String
+    - maxPages: int
+    - timeout: int
+    - delayBetweenRequests: int
+    - userAgent: String
+    - followRedirects: boolean
+    - maxBodySize: int
+    - enableCaching: boolean
+    + getStartingUrl(): String
+    + getMaxPages(): int
+    + getTimeout(): int
+    + isEnableCaching(): boolean
+    + {static} builder(): Builder
+    --
+    + Builder startingUrl(url: String): Builder
+    + Builder maxPages(pages: int): Builder
+    + Builder timeout(ms: int): Builder
+    + Builder enableCaching(enable: boolean): Builder
+    + Builder build(): ScrapingConfig
+  }
+  
+  class Builder {
+    - startingUrl: String
+    - maxPages: int
+    - timeout: int
+    - delayBetweenRequests: int
+    - userAgent: String
+    - followRedirects: boolean
+    - maxBodySize: int
+    - enableCaching: boolean
+    + startingUrl(url: String): Builder
+    + maxPages(pages: int): Builder
+    + timeout(ms: int): Builder
+    + delayBetweenRequests(delay: int): Builder
+    + userAgent(ua: String): Builder
+    + followRedirects(follow: boolean): Builder
+    + maxBodySize(size: int): Builder
+    + enableCaching(enable: boolean): Builder
+    + build(): ScrapingConfig
+  }
+}
+
+ScrapingConfig *-- Builder : nested class
+
+note right of ScrapingConfig
+  Usage:
+  ScrapingConfig config = 
+    ScrapingConfig.builder()
+      .startingUrl(url)
+      .maxPages(10)
+      .timeout(30000)
+      .enableCaching(true)
+      .build();
+end note
+
+@enduml
+
+@startuml AbstractFactory
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Abstract Factory Pattern
+
+package "com.scraper.producer.pattern.creational.abstractfactory" {
+  interface AbstractScraperFactory {
+    + createScraper(): ScraperProduct
+    + createExtractor(): ExtractorProduct
+  }
+  
+  interface ScraperProduct {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+  }
+  
+  interface ExtractorProduct {
+    + extractData(url: String): Map<String, String>
+  }
+  
+  class ScraperFactory {
+    + {static} getFactory(url: String): AbstractScraperFactory
+  }
+  
+  package "impl" {
+    class EbayScraperFactory {
+      + createScraper(): ScraperProduct
+      + createExtractor(): ExtractorProduct
+    }
+    
+    class GenericScraperFactory {
+      + createScraper(): ScraperProduct
+      + createExtractor(): ExtractorProduct
+    }
+    
+    class EbayScraper {
+      + scrapeUrls(url: String, maxPages: int): List<String>
+    }
+    
+    class GenericScraper {
+      + scrapeUrls(url: String, maxPages: int): List<String>
+    }
+    
+    class EbayExtractor {
+      + extractData(url: String): Map<String, String>
+    }
+    
+    class GenericExtractor {
+      + extractData(url: String): Map<String, String>
+    }
+  }
+}
+
+AbstractScraperFactory <|.. EbayScraperFactory
+AbstractScraperFactory <|.. GenericScraperFactory
+ScraperProduct <|.. EbayScraper
+ScraperProduct <|.. GenericScraper
+ExtractorProduct <|.. EbayExtractor
+ExtractorProduct <|.. GenericExtractor
+
+EbayScraperFactory ..> EbayScraper : creates
+EbayScraperFactory ..> EbayExtractor : creates
+GenericScraperFactory ..> GenericScraper : creates
+GenericScraperFactory ..> GenericExtractor : creates
+
+ScraperFactory ..> AbstractScraperFactory : returns
+
+note right of AbstractScraperFactory
+  Creates families of related objects:
+  - eBay Factory → eBay Scraper + eBay Extractor
+  - Generic Factory → Generic Scraper + Generic Extractor
+  Ensures compatible object pairs
+end note
+
+@enduml
+
+@startuml Adapter
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Adapter Pattern
+
+package "com.scraper.producer.pattern.structural.adapter" {
+  class MessageAdapter {
+    - objectMapper: ObjectMapper
+    + MessageAdapter()
+    + adaptToJson(url: String): String
+    + adaptFromJson(jsonMessage: String): String
+    + adaptBatchToJson(urls: List<String>): String
+  }
+}
+
+package "External" {
+  class "Plain String URL" as PlainString
+  class "JSON Message" as JSONMessage
+}
+
+MessageAdapter --> PlainString : adapts from
+MessageAdapter --> JSONMessage : adapts to
+
+note right of MessageAdapter
+  Adapts between incompatible formats:
+  - Plain string: "https://example.com"
+  - JSON: {"url":"...","timestamp":1234,"type":"product_url"}
+  
+  Allows systems expecting different
+  formats to work together
+end note
+
+@enduml
+
+@startuml Decorator
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Decorator Pattern
+
+package "com.scraper.producer.pattern.structural.decorator" {
+  interface ScraperDecorator {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + getSupportedDomain(): String
+  }
+  
+  abstract class BaseScraperDecorator {
+    # scraper: Scraper
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + getSupportedDomain(): String
+  }
+  
+  class LoggingScraperDecorator {
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    - logStartTime()
+    - logDuration()
+  }
+  
+  class CachingScraperDecorator {
+    - cache: Map<String, List<String>>
+    + scrapeUrls(url: String, maxPages: int): List<String>
+    + clearCache(): void
+  }
+  
+  class RetryScraperDecorator {
+    - maxRetries: int
+    - retryDelayMs: long
+    + scrapeUrls(url: String, maxPages: int): List<String>
+  }
+}
+
+package "com.scraper.producer.pattern.creational.factory" {
+  interface Scraper
+}
+
+ScraperDecorator <|-- BaseScraperDecorator
+BaseScraperDecorator <|-- LoggingScraperDecorator
+BaseScraperDecorator <|-- CachingScraperDecorator
+BaseScraperDecorator <|-- RetryScraperDecorator
+BaseScraperDecorator --> Scraper : wraps
+
+ScraperDecorator <|.. Scraper
+
+note right of BaseScraperDecorator
+  Decorators can be chained:
+  new LoggingDecorator(
+    new RetryDecorator(
+      new CachingDecorator(scraper)
+    )
+  )
+  
+  Adds functionality dynamically:
+  - Logging: Performance metrics
+  - Caching: Avoid duplicate requests
+  - Retry: Handle failures
+end note
+
+@enduml
+
+@startuml Facade
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Facade Pattern
+
+package "com.scraper.producer.pattern.structural.facade" {
+  class ScrapingFacade {
+    - rabbitTemplate: RabbitTemplate
+    - queueName: String
+    + scrapeAndPublish(config: ScrapingConfig): ScrapingResult
+    - createDecoratedScraper(scraper: Scraper, config: ScrapingConfig): ScraperDecorator
+    - publishUrls(urls: List<String>): int
+  }
+  
+  class ScrapingResult {
+    - urlsFound: int
+    - urlsPublished: int
+    - success: boolean
+    - message: String
+  }
+}
+
+package "Complex Subsystem" {
+  class ScraperFactory
+  class ScraperDecorator
+  class RabbitTemplate
+  class ScrapingConfig
+}
+
+ScrapingFacade --> ScraperFactory : uses
+ScrapingFacade --> ScraperDecorator : uses
+ScrapingFacade --> RabbitTemplate : uses
+ScrapingFacade --> ScrapingConfig : uses
+ScrapingFacade ..> ScrapingResult : returns
+
+note right of ScrapingFacade
+  Provides simple interface to complex subsystem:
+  
+  Client code:
+  result = facade.scrapeAndPublish(config)
+  
+  Instead of:
+  scraper = factory.create(...)
+  decorated = decorate(scraper)
+  urls = decorated.scrape(...)
+  publish(urls)
+  
+  Hides complexity of:
+  - Factory creation
+  - Decorator chaining
+  - Message publishing
+end note
+
+@enduml
+
+@startuml Strategy
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Strategy Pattern
+
+package "com.scraper.producer.pattern.behavioral.strategy" {
+  interface ScrapingStrategy {
+    + execute(url: String, maxPages: int): List<String>
+    + getStrategyName(): String
+  }
+  
+  class ScrapingContext {
+    - strategy: ScrapingStrategy
+    + ScrapingContext(strategy: ScrapingStrategy)
+    + setStrategy(strategy: ScrapingStrategy): void
+    + executeScraping(url: String, maxPages: int): List<String>
+    + getCurrentStrategyName(): String
+  }
+  
+  package "impl" {
+    class AggressiveScrapingStrategy {
+      + execute(url: String, maxPages: int): List<String>
+      + getStrategyName(): String
+    }
+    
+    class ConservativeScrapingStrategy {
+      + execute(url: String, maxPages: int): List<String>
+      + getStrategyName(): String
+    }
+    
+    class BalancedScrapingStrategy {
+      + execute(url: String, maxPages: int): List<String>
+      + getStrategyName(): String
+    }
+  }
+}
+
+ScrapingStrategy <|.. AggressiveScrapingStrategy
+ScrapingStrategy <|.. ConservativeScrapingStrategy
+ScrapingStrategy <|.. BalancedScrapingStrategy
+
+ScrapingContext --> ScrapingStrategy : uses
+
+note right of ScrapingContext
+  Allows switching algorithms at runtime:
+  
+  context = new ScrapingContext(new BalancedStrategy())
+  context.setStrategy(new AggressiveStrategy())
+  
+  Strategies:
+  - Aggressive: maxPages * 2, no delays
+  - Conservative: maxPages / 2, rate limited
+  - Balanced: standard approach
+end note
+
+@enduml
+
+@startuml Observer
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Observer Pattern
+
+package "com.scraper.producer.pattern.behavioral.observer" {
+  interface ScrapingObserver {
+    + onScrapingStarted(url: String): void
+    + onScrapingProgress(url: String, urlsFound: int): void
+    + onScrapingCompleted(url: String, totalUrls: int): void
+    + onScrapingError(url: String, error: String): void
+  }
+  
+  class ScrapingSubject {
+    - observers: List<ScrapingObserver>
+    + attach(observer: ScrapingObserver): void
+    + detach(observer: ScrapingObserver): void
+    + notifyScrapingStarted(url: String): void
+    + notifyScrapingProgress(url: String, urlsFound: int): void
+    + notifyScrapingCompleted(url: String, totalUrls: int): void
+    + notifyScrapingError(url: String, error: String): void
+  }
+  
+  package "impl" {
+    class LoggingObserver {
+      + onScrapingStarted(url: String): void
+      + onScrapingProgress(url: String, urlsFound: int): void
+      + onScrapingCompleted(url: String, totalUrls: int): void
+      + onScrapingError(url: String, error: String): void
+    }
+    
+    class MetricsObserver {
+      - totalOperations: AtomicInteger
+      - totalUrlsScraped: AtomicInteger
+      - totalErrors: AtomicInteger
+      - totalScrapingTime: AtomicLong
+      + onScrapingStarted(url: String): void
+      + onScrapingCompleted(url: String, totalUrls: int): void
+      + onScrapingError(url: String, error: String): void
+      + getTotalOperations(): int
+      + getTotalUrlsScraped(): int
+      + getTotalErrors(): int
+    }
+  }
+}
+
+ScrapingObserver <|.. LoggingObserver
+ScrapingObserver <|.. MetricsObserver
+
+ScrapingSubject --> ScrapingObserver : notifies
+ScrapingSubject o-- ScrapingObserver : manages
+
+note right of ScrapingSubject
+  Subject notifies all observers when events occur:
+  
+  subject.attach(new LoggingObserver())
+  subject.attach(new MetricsObserver())
+  
+  subject.notifyScrapingStarted(url)
+  → LoggingObserver logs event
+  → MetricsObserver tracks metrics
+  
+  Loose coupling: Subject doesn't know
+  concrete observer types
+end note
+
+@enduml
+
+@startuml TemplateMethod
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Template Method Pattern
+
+package "com.scraper.producer.pattern.behavioral.templatemethod" {
+  abstract class AbstractScrapingTemplate {
+    + {final} scrape(url: String, maxPages: int): List<String>
+    # initialize(url: String): void
+    # validateInput(url: String, maxPages: int): boolean
+    # prepareScraping(url: String): void
+    + {abstract} executeScraping(url: String, maxPages: int): List<String>
+    # postProcess(urls: List<String>): List<String>
+    # cleanup(): void
+  }
+  
+  package "impl" {
+    class EbayScrapingTemplate {
+      + executeScraping(url: String, maxPages: int): List<String>
+      + postProcess(urls: List<String>): List<String>
+    }
+    
+    class GenericScrapingTemplate {
+      + executeScraping(url: String, maxPages: int): List<String>
+    }
+  }
+}
+
+AbstractScrapingTemplate <|-- EbayScrapingTemplate
+AbstractScrapingTemplate <|-- GenericScrapingTemplate
+
+note right of AbstractScrapingTemplate
+  Template Method defines algorithm skeleton:
+  
+  1. initialize() - Hook method
+  2. validateInput() - Hook method
+  3. prepareScraping() - Hook method
+  4. executeScraping() - Abstract (must implement)
+  5. postProcess() - Hook method (can override)
+  6. cleanup() - Hook method
+  
+  Subclasses implement executeScraping()
+  Can override hook methods for customization
+end note
+
+@enduml
+
+@startuml PatternIntegration
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Pattern Integration - All Patterns Working Together
+
+package "EnhancedScrapingService" {
+  class EnhancedScrapingService {
+    - scrapingFacade: ScrapingFacade
+    - messageAdapter: MessageAdapter
+    - scrapingSubject: ScrapingSubject
+    + scrapeWithAllPatterns(url, maxPages, strategy): ScrapingResult
+  }
+}
+
+package "Patterns Used" {
+  [Builder] as Builder
+  [Factory Method] as Factory
+  [Abstract Factory] as AbstractFactory
+  [Strategy] as Strategy
+  [Observer] as Observer
+  [Template Method] as Template
+  [Adapter] as Adapter
+  [Decorator] as Decorator
+  [Facade] as Facade
+}
+
+EnhancedScrapingService --> Builder : creates config
+EnhancedScrapingService --> Factory : creates scraper
+EnhancedScrapingService --> AbstractFactory : creates families
+EnhancedScrapingService --> Strategy : executes scraping
+EnhancedScrapingService --> Observer : notifies events
+EnhancedScrapingService --> Template : defines algorithm
+EnhancedScrapingService --> Adapter : adapts messages
+EnhancedScrapingService --> Facade : simplifies workflow
+Facade --> Decorator : uses internally
+
+note right of EnhancedScrapingService
+  Flow:
+  1. Builder creates ScrapingConfig
+  2. Factory Method creates appropriate scraper
+  3. Strategy executes scraping algorithm
+  4. Observer tracks events and metrics
+  5. Template Method defines algorithm structure
+  6. Adapter converts URLs to JSON
+  7. Decorator adds features (caching, retry, logging)
+  8. Facade simplifies the entire workflow
+  9. Abstract Factory ensures compatible objects
+end note
+
+@enduml
+

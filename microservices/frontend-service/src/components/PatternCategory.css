@@ -1,0 +1,36 @@
+.pattern-category {
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.pattern-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pattern-item {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pattern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pattern-header h3 {
+  color: #667eea;
+  margin: 0;
+}
+
+.pattern-description {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+

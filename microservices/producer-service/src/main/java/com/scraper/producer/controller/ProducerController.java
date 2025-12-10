@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/producer")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://127.0.0.1:3000"})
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Producer", description = "Producer service operations")

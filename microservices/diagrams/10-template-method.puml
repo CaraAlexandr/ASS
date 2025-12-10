@@ -1,0 +1,48 @@
+@startuml TemplateMethod
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Template Method Pattern
+
+package "com.scraper.producer.pattern.behavioral.templatemethod" {
+  abstract class AbstractScrapingTemplate {
+    + {final} scrape(url: String, maxPages: int): List<String>
+    # initialize(url: String): void
+    # validateInput(url: String, maxPages: int): boolean
+    # prepareScraping(url: String): void
+    + {abstract} executeScraping(url: String, maxPages: int): List<String>
+    # postProcess(urls: List<String>): List<String>
+    # cleanup(): void
+  }
+  
+  package "impl" {
+    class EbayScrapingTemplate {
+      + executeScraping(url: String, maxPages: int): List<String>
+      + postProcess(urls: List<String>): List<String>
+    }
+    
+    class GenericScrapingTemplate {
+      + executeScraping(url: String, maxPages: int): List<String>
+    }
+  }
+}
+
+AbstractScrapingTemplate <|-- EbayScrapingTemplate
+AbstractScrapingTemplate <|-- GenericScrapingTemplate
+
+note right of AbstractScrapingTemplate
+  Template Method defines algorithm skeleton:
+  
+  1. initialize() - Hook method
+  2. validateInput() - Hook method
+  3. prepareScraping() - Hook method
+  4. executeScraping() - Abstract (must implement)
+  5. postProcess() - Hook method (can override)
+  6. cleanup() - Hook method
+  
+  Subclasses implement executeScraping()
+  Can override hook methods for customization
+end note
+
+@enduml
+
