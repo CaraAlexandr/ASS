@@ -46,6 +46,10 @@ The implementation includes 9 design patterns:
 8. Observer
 9. Template Method
 
+![Design Patterns Overview](diagrams/Design_Patterns_Overview-Design_Patterns_Implementation___Overview.png)
+
+*Figure 1: Overview of all 9 design patterns implemented in the system*
+
 ---
 
 ## Creational Patterns
@@ -76,6 +80,12 @@ public static Scraper createScraper(String url) {
     }
 }
 ```
+
+#### Pattern Structure
+
+![Factory Method Pattern](diagrams/FactoryMethod-Factory_Method_Pattern.png)
+
+*Figure 2: Factory Method Pattern - Class structure showing the factory and product hierarchy*
 
 #### Why It Was Used
 
@@ -123,6 +133,12 @@ ScrapingConfig config = ScrapingConfig.builder()
     .build();
 ```
 
+#### Pattern Structure
+
+![Builder Pattern](diagrams/Builder-Builder_Pattern.png)
+
+*Figure 3: Builder Pattern - Shows the nested Builder class and fluent API for constructing ScrapingConfig objects*
+
 #### Why It Was Used
 
 1. **Complex Configuration:** Scraping operations require many configuration parameters (URL, timeout, delays, caching, etc.). Using a constructor with many parameters would be error-prone and hard to read.
@@ -169,6 +185,12 @@ ExtractorProduct extractor = factory.createExtractor();
 // Both objects are from the same family (eBay or Generic)
 ```
 
+#### Pattern Structure
+
+![Abstract Factory Pattern](diagrams/AbstractFactory-Abstract_Factory_Pattern.png)
+
+*Figure 4: Abstract Factory Pattern - Shows the factory hierarchy creating families of related products (scraper + extractor pairs)*
+
 #### Why It Was Used
 
 1. **Object Families:** The system needs compatible pairs of objects (scraper + extractor). An eBay scraper should work with an eBay extractor, not a generic one.
@@ -211,6 +233,12 @@ String json = messageAdapter.adaptToJson("https://example.com");
 // Adapt JSON back to plain string
 String url = messageAdapter.adaptFromJson(json);
 ```
+
+#### Pattern Structure
+
+![Adapter Pattern](diagrams/Adapter-Adapter_Pattern.png)
+
+*Figure 5: Adapter Pattern - Shows how MessageAdapter bridges incompatible interfaces (plain strings and JSON messages)*
 
 #### Why It Was Used
 
@@ -257,6 +285,12 @@ ScraperDecorator decorated = new LoggingScraperDecorator(
 );
 // Decorators can be chained to add multiple features
 ```
+
+#### Pattern Structure
+
+![Decorator Pattern](diagrams/Decorator-Decorator_Pattern.png)
+
+*Figure 6: Decorator Pattern - Shows the decorator hierarchy allowing dynamic composition of features (caching, retry, logging)*
 
 #### Why It Was Used
 
@@ -306,6 +340,12 @@ publishUrls(urls);
 // With Facade (simple):
 ScrapingResult result = scrapingFacade.scrapeAndPublish(config);
 ```
+
+#### Pattern Structure
+
+![Facade Pattern](diagrams/Facade-Facade_Pattern.png)
+
+*Figure 7: Facade Pattern - Shows how ScrapingFacade provides a simplified interface to the complex scraping subsystem*
 
 #### Why It Was Used
 
@@ -363,6 +403,12 @@ context.setStrategy(new AggressiveScrapingStrategy());
 urls = context.executeScraping(url, maxPages);
 ```
 
+#### Pattern Structure
+
+![Strategy Pattern](diagrams/Strategy-Strategy_Pattern.png)
+
+*Figure 8: Strategy Pattern - Shows the strategy hierarchy with context class that can switch between different scraping algorithms at runtime*
+
 #### Why It Was Used
 
 1. **Multiple Algorithms:** Different scraping scenarios require different approaches:
@@ -414,6 +460,12 @@ subject.notifyScrapingStarted(url);
 // → LoggingObserver logs the event
 // → MetricsObserver increments operation count
 ```
+
+#### Pattern Structure
+
+![Observer Pattern](diagrams/Observer-Observer_Pattern.png)
+
+*Figure 9: Observer Pattern - Shows the subject-observer relationship where multiple observers are notified of scraping events*
 
 #### Why It Was Used
 
@@ -467,6 +519,12 @@ public final List<String> scrape(String url, int maxPages) {
 }
 ```
 
+#### Pattern Structure
+
+![Template Method Pattern](diagrams/TemplateMethod-Template_Method_Pattern.png)
+
+*Figure 10: Template Method Pattern - Shows the abstract template class defining the algorithm skeleton with hook methods and abstract methods implemented by subclasses*
+
 #### Why It Was Used
 
 1. **Algorithm Structure:** All scraping operations follow the same general structure:
@@ -513,6 +571,10 @@ All 9 patterns are integrated in the `EnhancedScrapingService` class, demonstrat
 7. **Adapter** converts URLs between different formats
 8. **Decorator** adds features (caching, retry, logging) to scrapers
 9. **Facade** simplifies the entire workflow into a single method call
+
+![Pattern Integration](diagrams/PatternIntegration-Pattern_Integration___All_Patterns_Working_Together.png)
+
+*Figure 11: Pattern Integration - Visual representation of how all 9 design patterns work together in the EnhancedScrapingService*
 
 ### Integration Flow
 
@@ -613,9 +675,3 @@ All patterns contribute to a robust, maintainable, and extensible system that ca
 - Java Design Patterns Best Practices
 
 ---
-
-**Report Generated:** 2024  
-**Project:** Microservices Web Scraping Application  
-**Service:** Producer Service  
-**Patterns Implemented:** 9 (3 Creational, 3 Structural, 3 Behavioral)
-
